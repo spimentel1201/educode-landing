@@ -1,68 +1,121 @@
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useTransform } from "framer-motion";
 import {
   GraduationCap,
   MonitorPlay,
   Users,
-  BookOpen,
-  Code2,
-  Brain,
   Star,
   ArrowRight,
   Sparkles,
   CheckCircle2,
+  Play,
+  ChevronRight,
+  Search,
 } from "lucide-react";
 import logo from "@/assets/logo.svg";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
+import { courses } from "@/data/courses";
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.1, duration: 0.6, ease: "easeOut" as const },
-  }),
+/* ─── Shared animation variants ─── */
+const stagger = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08 } },
 };
 
-const courses = [
-  {
-    icon: <Code2 className="size-6" />,
-    title: "Programación Creativa",
-    description:
-      "Aprende JavaScript, Python y desarrollo web con proyectos prácticos diseñados para el aula.",
-    tag: "Popular",
-    color: "from-blue-500/20 to-cyan-400/20",
-    border: "border-blue-400/30",
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" as const },
   },
-  {
-    icon: <Brain className="size-6" />,
-    title: "Pensamiento Computacional",
-    description:
-      "Desarrolla habilidades de resolución de problemas y lógica con ejercicios interactivos en tiempo real.",
-    tag: "Nuevo",
-    color: "from-violet-500/20 to-purple-400/20",
-    border: "border-violet-400/30",
-  },
-  {
-    icon: <MonitorPlay className="size-6" />,
-    title: "Apps Educativas con IA",
-    description:
-      "Crea herramientas inteligentes para el aprendizaje usando inteligencia artificial y machine learning.",
-    tag: "Próximamente",
-    color: "from-emerald-500/20 to-teal-400/20",
-    border: "border-emerald-400/30",
-  },
-  {
-    icon: <BookOpen className="size-6" />,
-    title: "Datos para Educadores",
-    description:
-      "Analiza el rendimiento de tus estudiantes con dashboards, gráficas y métricas en tiempo real.",
-    tag: "Recomendado",
-    color: "from-amber-500/20 to-orange-400/20",
-    border: "border-amber-400/30",
-  },
-];
+};
 
+/* ─── Interactive course card with code preview on hover ─── */
+function CoursePreviewCard({
+  course,
+  index,
+}: {
+  course: (typeof courses)[0];
+  index: number;
+}) {
+  const navigate = useNavigate();
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const rotateX = useTransform(mouseY, [-150, 150], [4, -4]);
+  const rotateY = useTransform(mouseX, [-150, 150], [-4, 4]);
+
+  return (
+    <motion.div
+      variants={fadeUp}
+      style={{ rotateX, rotateY, transformPerspective: 800 }}
+      onMouseMove={(e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        mouseX.set(e.clientX - rect.left - rect.width / 2);
+        mouseY.set(e.clientY - rect.top - rect.height / 2);
+      }}
+      onMouseLeave={() => {
+        mouseX.set(0);
+        mouseY.set(0);
+      }}
+      className="group relative rounded-2xl border border-white/50 bg-white/50 backdrop-blur-xl overflow-hidden shadow-lg shadow-black/5 cursor-pointer transition-shadow hover:shadow-xl hover:shadow-primary/8"
+      onClick={() => navigate(`/courses/${course.id}`)}
+    >
+      {/* Gradient top bar */}
+      <div
+        className={`h-40 bg-gradient-to-br ${course.gradient} relative flex items-center justify-center`}
+      >
+        <span className="text-5xl drop-shadow-sm">{course.icon}</span>
+        {/* Code preview overlay on hover */}
+        {course.previewCode && (
+          <div className="absolute inset-0 bg-gray-900/85 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 p-5">
+            <pre className="text-[11px] leading-relaxed text-emerald-300 font-mono whitespace-pre-wrap text-left">
+              {course.previewCode}
+            </pre>
+            <div className="absolute bottom-3 right-3">
+              <span className="inline-flex items-center gap-1 text-[10px] font-medium text-white/70 bg-white/10 rounded-full px-2 py-0.5">
+                <Play className="size-2.5" />
+                Vista previa
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="p-6">
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-[11px] font-semibold tracking-wide uppercase text-primary/80 bg-primary/8 rounded-full px-2.5 py-0.5">
+            {course.tag}
+          </span>
+          <span className="text-[11px] font-medium text-muted-foreground">
+            {course.level}
+          </span>
+        </div>
+        <h3 className="text-lg font-bold text-foreground mb-1.5 group-hover:text-primary transition-colors">
+          {course.title}
+        </h3>
+        <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+          {course.description}
+        </p>
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-1">
+              <Star className="size-3.5 fill-amber-400 text-amber-400" />
+              {course.rating}
+            </span>
+            <span>{course.lessons} clases</span>
+          </div>
+          <span className="font-bold text-primary">
+            ${course.price.toLocaleString("es-MX")} MXN
+          </span>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ─── Testimonials ─── */
 const testimonials = [
   {
     name: "Dra. María Fernández",
@@ -112,16 +165,16 @@ export default function Landing() {
       transition={{ duration: 0.5 }}
       className="min-h-screen relative overflow-hidden"
     >
-      {/* Ambient background blobs */}
+      {/* Ambient background */}
       <div className="pointer-events-none fixed inset-0 -z-10">
-        <div className="absolute -top-40 -left-40 h-[600px] w-[600px] rounded-full bg-blue-300/20 blur-[120px]" />
-        <div className="absolute top-1/3 -right-32 h-[500px] w-[500px] rounded-full bg-cyan-300/15 blur-[100px]" />
-        <div className="absolute -bottom-40 left-1/3 h-[500px] w-[500px] rounded-full bg-violet-300/15 blur-[100px]" />
+        <div className="absolute -top-40 -left-40 h-[700px] w-[700px] rounded-full bg-blue-200/25 blur-[140px]" />
+        <div className="absolute top-1/3 -right-32 h-[500px] w-[500px] rounded-full bg-cyan-200/18 blur-[120px]" />
+        <div className="absolute -bottom-40 left-1/3 h-[500px] w-[500px] rounded-full bg-violet-200/15 blur-[120px]" />
       </div>
 
       {/* ── Navbar ── */}
       <nav className="sticky top-0 z-50 backdrop-blur-xl bg-white/60 border-b border-white/40">
-        <div className="mx-auto max-w-6xl flex items-center justify-between px-6 py-4">
+        <div className="mx-auto max-w-7xl flex items-center justify-between px-6 lg:px-12 py-4">
           <a href="/" className="flex items-center gap-2.5 group">
             <img
               src={logo}
@@ -134,6 +187,13 @@ export default function Landing() {
           </a>
 
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
+            <a
+              href="/courses"
+              className="hover:text-primary transition-colors flex items-center gap-1"
+            >
+              Catálogo
+              <ChevronRight className="size-3.5" />
+            </a>
             <a href="#cursos" className="hover:text-primary transition-colors">
               Cursos
             </a>
@@ -157,28 +217,28 @@ export default function Landing() {
       </nav>
 
       {/* ── Hero ── */}
-      <section className="relative px-6 pt-20 pb-28 md:pt-28 md:pb-36">
-        <div className="mx-auto max-w-4xl text-center">
+      <section className="relative px-6 pt-24 pb-32 md:pt-36 md:pb-44">
+        <div className="mx-auto max-w-5xl text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 backdrop-blur-sm px-4 py-1.5 text-sm font-medium text-primary mb-8"
+            className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-primary/5 backdrop-blur-sm px-4 py-1.5 text-sm font-medium text-primary mb-8"
           >
             <Sparkles className="size-4" />
             Plataforma educativa del futuro
           </motion.div>
 
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl md:text-6xl font-extrabold tracking-tight leading-[1.1] text-foreground"
+            transition={{ duration: 0.7, delay: 0.1 }}
+            className="text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.05] text-foreground"
           >
-            Cursos interactivos en tiempo real
+            Aprende programación
             <br />
             <span className="bg-gradient-to-r from-primary via-blue-500 to-cyan-500 bg-clip-text text-transparent">
-              para las aulas de hoy
+              en tiempo real.
             </span>
           </motion.h1>
 
@@ -186,25 +246,26 @@ export default function Landing() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
+            className="mt-7 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
           >
-            EduCode ayuda a escuelas y profesores a enseñar tecnología con
-            experiencias de aprendizaje vivas, colaborativas y medibles.
+            EduCode ofrece cursos interactivos diseñados para escuelas y
+            profesores que quieren enseñar tecnología de forma vivida,
+            colaborativa y medible.
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
+            className="mt-11 flex flex-col sm:flex-row items-center justify-center gap-4"
           >
             <Button
               size="lg"
-              onClick={() => navigate("/auth")}
+              onClick={() => navigate("/courses")}
               className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer shadow-lg shadow-primary/25 px-8 text-base"
             >
-              Explorar cursos
-              <ArrowRight className="ml-2 size-5" />
+              <Search className="mr-2 size-5" />
+              Explorar catálogo
             </Button>
             <Button
               size="lg"
@@ -222,12 +283,12 @@ export default function Landing() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.45 }}
-            className="mt-14 flex flex-wrap items-center justify-center gap-4"
+            className="mt-16 flex flex-wrap items-center justify-center gap-4"
           >
             {features.map((f) => (
               <div
                 key={f.text}
-                className="flex items-center gap-2 rounded-xl border border-white/50 bg-white/50 backdrop-blur-md px-4 py-2.5 text-sm text-foreground/80 shadow-sm"
+                className="flex items-center gap-2 rounded-xl border border-white/50 bg-white/50 backdrop-blur-md px-5 py-3 text-sm text-foreground/80 shadow-sm"
               >
                 <span className="text-primary">{f.icon}</span>
                 {f.text}
@@ -237,117 +298,116 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── Courses ── */}
-      <section id="cursos" className="relative px-6 py-24">
-        <div className="mx-auto max-w-6xl">
+      {/* ── Courses preview ── */}
+      <section id="cursos" className="relative px-6 py-28">
+        <div className="mx-auto max-w-7xl">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-80px" }}
+            variants={stagger}
             className="text-center mb-16"
           >
             <motion.p
               variants={fadeUp}
-              custom={0}
               className="text-sm font-semibold tracking-widest uppercase text-primary mb-3"
             >
-              Nuestros cursos
+              Catálogo de cursos
             </motion.p>
             <motion.h2
               variants={fadeUp}
-              custom={1}
-              className="text-3xl md:text-4xl font-bold tracking-tight text-foreground"
+              className="text-3xl md:text-5xl font-bold tracking-tight text-foreground"
             >
-              Aprende creando, enseña con tecnología
+              Explora lo que puedes enseñar
             </motion.h2>
             <motion.p
               variants={fadeUp}
-              custom={2}
               className="mt-4 text-muted-foreground max-w-xl mx-auto"
             >
-              Cada curso combina teoría y práctica con proyectos que los
-              estudiantes pueden llevar al aula inmediatamente.
+              Cada curso combina teoría, práctica y proyectos listos para
+              implementar en el aula. Pasa el cursor sobre una tarjeta para
+              ver una vista previa del contenido.
             </motion.p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-60px" }}
+            variants={stagger}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+          >
             {courses.map((course, i) => (
-              <motion.div
-                key={course.title}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-40px" }}
-                variants={fadeUp}
-                custom={i}
-                whileHover={{ y: -6, transition: { duration: 0.25 } }}
-                className={`group relative rounded-2xl border ${course.border} bg-gradient-to-br ${course.color} backdrop-blur-xl p-6 shadow-lg shadow-black/5 cursor-default`}
-              >
-                {/* Subtle inner glow */}
-                <div className="absolute inset-0 rounded-2xl bg-white/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                <div className="relative">
-                  <div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-white/60 backdrop-blur-sm text-primary shadow-sm border border-white/50">
-                    {course.icon}
-                  </div>
-                  <span className="inline-block text-[11px] font-semibold tracking-wide uppercase text-primary/80 bg-white/50 backdrop-blur-sm rounded-full px-2.5 py-0.5 border border-white/40 mb-3">
-                    {course.tag}
-                  </span>
-                  <h3 className="text-lg font-bold text-foreground mb-2">
-                    {course.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {course.description}
-                  </p>
-                </div>
-              </motion.div>
+              <CoursePreviewCard key={course.id} course={course} index={i} />
             ))}
-          </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="text-center mt-12"
+          >
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => navigate("/courses")}
+              className="backdrop-blur-sm bg-white/50 border-white/60 hover:bg-white/70 cursor-pointer"
+            >
+              Ver catálogo completo
+              <ArrowRight className="ml-2 size-4" />
+            </Button>
+          </motion.div>
         </div>
       </section>
 
       {/* ── Testimonials ── */}
-      <section id="testimonios" className="relative px-6 py-24">
+      <section id="testimonios" className="relative px-6 py-28">
         <div className="mx-auto max-w-6xl">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-80px" }}
+            variants={stagger}
             className="text-center mb-16"
           >
             <motion.p
               variants={fadeUp}
-              custom={0}
               className="text-sm font-semibold tracking-widest uppercase text-primary mb-3"
             >
               Testimonios
             </motion.p>
             <motion.h2
               variants={fadeUp}
-              custom={1}
-              className="text-3xl md:text-4xl font-bold tracking-tight text-foreground"
+              className="text-3xl md:text-5xl font-bold tracking-tight text-foreground"
             >
               Lo que dicen los educadores
             </motion.h2>
             <motion.p
               variants={fadeUp}
-              custom={2}
               className="mt-4 text-muted-foreground max-w-xl mx-auto"
             >
-              Profesores y directores de toda Latinoamérica ya están usando
-              EduCode en sus aulas.
+              Profesores y directores de toda Latinoamérica ya transforman sus
+              aulas con EduCode.
             </motion.p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((t, i) => (
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-40px" }}
+            variants={stagger}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          >
+            {testimonials.map((t) => (
               <motion.div
                 key={t.name}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-40px" }}
                 variants={fadeUp}
-                custom={i}
-                whileHover={{ y: -4, transition: { duration: 0.25 } }}
+                whileHover={{
+                  y: -4,
+                  transition: { duration: 0.25 },
+                }}
                 className="relative rounded-2xl border border-white/50 bg-white/50 backdrop-blur-xl p-8 shadow-lg shadow-black/5"
               >
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/40 to-white/10 pointer-events-none" />
@@ -361,7 +421,7 @@ export default function Landing() {
                     ))}
                   </div>
                   <p className="text-foreground/80 leading-relaxed mb-6 text-sm">
-                    "{t.quote}"
+                    &ldquo;{t.quote}&rdquo;
                   </p>
                   <div className="flex items-center gap-3">
                     <div className="size-10 rounded-full bg-gradient-to-br from-primary/30 to-blue-400/30 backdrop-blur-sm border border-white/50 flex items-center justify-center text-primary font-bold text-sm">
@@ -381,31 +441,31 @@ export default function Landing() {
                 </div>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* ── CTA ── */}
-      <section className="relative px-6 py-24">
+      <section className="relative px-6 py-28">
         <div className="mx-auto max-w-4xl">
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.97 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
             className="relative overflow-hidden rounded-3xl border border-white/50 bg-white/50 backdrop-blur-2xl p-12 md:p-16 text-center shadow-2xl shadow-primary/10"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-blue-400/10 to-cyan-400/10 pointer-events-none" />
-            <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-blue-300/20 blur-[80px] pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full bg-violet-300/15 blur-[80px] pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-blue-400/8 to-cyan-400/8 pointer-events-none" />
+            <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-blue-300/15 blur-[80px] pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full bg-violet-300/10 blur-[80px] pointer-events-none" />
 
             <div className="relative">
               <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
                 Transforma tu aula hoy
               </h2>
               <p className="mt-4 text-muted-foreground max-w-lg mx-auto">
-                Únete a cientos de escuelas que ya están enseñando tecnología
-                de forma interactiva y efectiva.
+                Únete a cientos de escuelas que ya enseñan tecnología de forma
+                interactiva y efectiva. Crea tu cuenta sin costo.
               </p>
               <Button
                 size="lg"
@@ -422,7 +482,7 @@ export default function Landing() {
 
       {/* ── Footer ── */}
       <footer className="border-t border-white/40 bg-white/40 backdrop-blur-xl">
-        <div className="mx-auto max-w-6xl px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="mx-auto max-w-7xl px-6 lg:px-12 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2.5">
             <img src={logo} alt="EduCode" className="h-7 w-7 rounded-md" />
             <span className="font-bold text-foreground">
@@ -430,8 +490,8 @@ export default function Landing() {
             </span>
           </div>
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} EduCode. Plataforma educativa para las
-            aulas del futuro.
+            &copy; {new Date().getFullYear()} EduCode. Cursos interactivos para
+            las aulas del futuro.
           </p>
           <div className="flex gap-6 text-sm text-muted-foreground">
             <a href="#" className="hover:text-primary transition-colors">
