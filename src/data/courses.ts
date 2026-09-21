@@ -1,3 +1,9 @@
+export interface Instructor {
+  name: string;
+  initials: string;
+  color: string;
+}
+
 export interface Course {
   id: string;
   title: string;
@@ -5,6 +11,7 @@ export interface Course {
   description: string;
   longDescription: string;
   category: string;
+  categoryColor: string;
   level: "Básico" | "Intermedio" | "Avanzado";
   price: number;
   originalPrice?: number;
@@ -16,6 +23,7 @@ export interface Course {
   tag: string;
   gradient: string;
   icon: string;
+  instructor: Instructor;
   previewCode?: string;
   highlights: string[];
   schedule: ScheduleSlot[];
@@ -39,6 +47,7 @@ export const courses: Course[] = [
     longDescription:
       "Un recorrido completo por los fundamentos de la programación aplicados a la educación. Aprenderás a construir aplicaciones web interactivas, automatizar tareas del aula y crear herramientas personalizadas para tus estudiantes. Cada módulo incluye proyectos reales que puedes implementar inmediatamente en tu institución.",
     category: "Desarrollo Web",
+    categoryColor: "bg-blue-500/10 text-blue-700 border-blue-200/60",
     level: "Básico",
     price: 1999,
     originalPrice: 3499,
@@ -50,6 +59,11 @@ export const courses: Course[] = [
     tag: "Popular",
     gradient: "from-blue-500/20 to-cyan-400/20",
     icon: "💻",
+    instructor: {
+      name: "Carlos Mendoza",
+      initials: "CM",
+      color: "from-blue-500 to-cyan-500",
+    },
     previewCode: `function greet(name) {
   return \`Hola, \${name}!\`;
 }
@@ -76,6 +90,7 @@ console.log(greet("Mundo"));`,
     longDescription:
       "Pensamiento computacional no es solo programar: es una forma de abordar problemas complejos descomponiéndolos en partes manejables. Este curso te enseña algoritmos, patrones y abstracción con ejercicios interactivos que puedes replicar en cualquier materia, desde matemáticas hasta literatura.",
     category: "Fundamentos",
+    categoryColor: "bg-violet-500/10 text-violet-700 border-violet-200/60",
     level: "Básico",
     price: 1499,
     originalPrice: 2499,
@@ -87,6 +102,11 @@ console.log(greet("Mundo"));`,
     tag: "Nuevo",
     gradient: "from-violet-500/20 to-purple-400/20",
     icon: "🧠",
+    instructor: {
+      name: "María Fernández",
+      initials: "MF",
+      color: "from-violet-500 to-purple-500",
+    },
     previewCode: `# Algoritmo de búsqueda
 def buscar(lista, objetivo):
     for i, item in enumerate(lista):
@@ -115,6 +135,7 @@ def buscar(lista, objetivo):
     longDescription:
       "Descubre cómo la inteligencia artificial puede personalizar el aprendizaje de cada estudiante. Desde chatbots educativos hasta sistemas de evaluación automática, aprenderás a integrar modelos de IA en aplicaciones web que realmente transformen la experiencia educativa.",
     category: "Inteligencia Artificial",
+    categoryColor: "bg-emerald-500/10 text-emerald-700 border-emerald-200/60",
     level: "Intermedio",
     price: 2999,
     originalPrice: 4999,
@@ -126,6 +147,11 @@ def buscar(lista, objetivo):
     tag: "Próximamente",
     gradient: "from-emerald-500/20 to-teal-400/20",
     icon: "🤖",
+    instructor: {
+      name: "Ana Sofía Torres",
+      initials: "AT",
+      color: "from-emerald-500 to-teal-500",
+    },
     previewCode: `const response = await ai.generate({
   prompt: "Explica la fotosíntesis",
   level: "secundaria",
@@ -152,6 +178,7 @@ def buscar(lista, objetivo):
     longDescription:
       "La educación basada en datos no es una tendencia: es una necesidad. Aprende a recopilar, visualizar e interpretar métricas del rendimiento de tus estudiantes para identificar patrones, anticipar dificultades y diseñar intervenciones personalizadas.",
     category: "Análisis de Datos",
+    categoryColor: "bg-amber-500/10 text-amber-700 border-amber-200/60",
     level: "Intermedio",
     price: 2499,
     originalPrice: 3999,
@@ -163,6 +190,11 @@ def buscar(lista, objetivo):
     tag: "Recomendado",
     gradient: "from-amber-500/20 to-orange-400/20",
     icon: "📊",
+    instructor: {
+      name: "Carlos Mendoza",
+      initials: "CM",
+      color: "from-amber-500 to-orange-500",
+    },
     previewCode: `const metrics = await dashboard.query({
   metric: "completion_rate",
   period: "monthly",

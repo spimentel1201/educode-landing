@@ -10,6 +10,8 @@ import {
   Play,
   ChevronRight,
   Search,
+  Clock,
+  BookOpen,
 } from "lucide-react";
 import logo from "@/assets/logo.svg";
 import { Button } from "@/components/ui/button";
@@ -31,7 +33,7 @@ const fadeUp = {
   },
 };
 
-/* ─── Interactive course card with code preview on hover ─── */
+/* ─── Platzi/EdTeam-style course card ─── */
 function CoursePreviewCard({
   course,
   index,
@@ -43,8 +45,8 @@ function CoursePreviewCard({
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const rotateX = useTransform(mouseY, [-150, 150], [4, -4]);
-  const rotateY = useTransform(mouseX, [-150, 150], [-4, 4]);
+  const rotateX = useTransform(mouseY, [-150, 150], [3, -3]);
+  const rotateY = useTransform(mouseX, [-150, 150], [-3, 3]);
 
   return (
     <motion.div
@@ -59,56 +61,107 @@ function CoursePreviewCard({
         mouseX.set(0);
         mouseY.set(0);
       }}
-      className="group relative rounded-2xl border border-white/50 bg-white/50 backdrop-blur-xl overflow-hidden shadow-lg shadow-black/5 cursor-pointer transition-shadow hover:shadow-xl hover:shadow-primary/8"
+      className="group relative rounded-2xl border border-black/[0.06] bg-white overflow-hidden shadow-sm hover:shadow-xl hover:shadow-black/[0.06] transition-all duration-300 cursor-pointer"
       onClick={() => navigate(`/courses/${course.id}`)}
     >
-      {/* Gradient top bar */}
+      {/* Thumbnail area */}
       <div
-        className={`h-40 bg-gradient-to-br ${course.gradient} relative flex items-center justify-center`}
+        className={`relative h-44 bg-gradient-to-br ${course.gradient} flex items-center justify-center overflow-hidden`}
       >
-        <span className="text-5xl drop-shadow-sm">{course.icon}</span>
-        {/* Code preview overlay on hover */}
+        <span className="text-5xl drop-shadow-sm group-hover:scale-110 transition-transform duration-500">
+          {course.icon}
+        </span>
+        {/* Code preview on hover */}
         {course.previewCode && (
-          <div className="absolute inset-0 bg-gray-900/85 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 p-5">
-            <pre className="text-[11px] leading-relaxed text-emerald-300 font-mono whitespace-pre-wrap text-left">
+          <div className="absolute inset-0 bg-gray-900/90 backdrop-blur-sm flex flex-col justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 p-5">
+            <pre className="text-[11px] leading-relaxed text-emerald-300/90 font-mono whitespace-pre-wrap text-left">
               {course.previewCode}
             </pre>
-            <div className="absolute bottom-3 right-3">
-              <span className="inline-flex items-center gap-1 text-[10px] font-medium text-white/70 bg-white/10 rounded-full px-2 py-0.5">
-                <Play className="size-2.5" />
-                Vista previa
-              </span>
+            <div className="absolute bottom-3 right-3 flex items-center gap-1 text-[10px] font-medium text-white/50">
+              <Play className="size-2.5" />
+              Vista previa
             </div>
           </div>
         )}
+        {/* Tag badge */}
+        <span className="absolute top-3 left-3 text-[11px] font-bold tracking-wide uppercase bg-white/90 backdrop-blur-sm text-foreground/80 rounded-md px-2 py-0.5 shadow-sm">
+          {course.tag}
+        </span>
       </div>
 
-      <div className="p-6">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-[11px] font-semibold tracking-wide uppercase text-primary/80 bg-primary/8 rounded-full px-2.5 py-0.5">
-            {course.tag}
-          </span>
-          <span className="text-[11px] font-medium text-muted-foreground">
-            {course.level}
-          </span>
-        </div>
-        <h3 className="text-lg font-bold text-foreground mb-1.5 group-hover:text-primary transition-colors">
+      <div className="p-5">
+        {/* Category pill */}
+        <span
+          className={`inline-block text-[11px] font-semibold tracking-wide rounded-md px-2 py-0.5 border mb-3 ${course.categoryColor}`}
+        >
+          {course.category}
+        </span>
+
+        <h3 className="text-[15px] font-bold text-gray-900 mb-1.5 group-hover:text-primary transition-colors leading-snug">
           {course.title}
         </h3>
-        <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+        <p className="text-[13px] text-gray-500 leading-relaxed mb-4 line-clamp-2">
           {course.description}
         </p>
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1">
-              <Star className="size-3.5 fill-amber-400 text-amber-400" />
-              {course.rating}
-            </span>
-            <span>{course.lessons} clases</span>
+
+        {/* Instructor */}
+        <div className="flex items-center gap-2.5 mb-4">
+          <div
+            className={`size-8 rounded-full bg-gradient-to-br ${course.instructor.color} flex items-center justify-center text-white text-[10px] font-bold shadow-sm`}
+          >
+            {course.instructor.initials}
           </div>
-          <span className="font-bold text-primary">
-            ${course.price.toLocaleString("es-MX")} MXN
+          <div>
+            <p className="text-xs font-semibold text-gray-700">
+              {course.instructor.name}
+            </p>
+            <p className="text-[11px] text-gray-400">Instructor</p>
+          </div>
+        </div>
+
+        {/* Meta row */}
+        <div className="flex items-center gap-3 text-[12px] text-gray-400 border-t border-gray-100 pt-3">
+          <span className="flex items-center gap-1">
+            <Clock className="size-3.5" />
+            {course.duration}
           </span>
+          <span className="flex items-center gap-1">
+            <BookOpen className="size-3.5" />
+            {course.lessons} clases
+          </span>
+          <span className="flex items-center gap-1">
+            <Users className="size-3.5" />
+            {course.students.toLocaleString("es-MX")}
+          </span>
+          <span className="flex items-center gap-1 ml-auto">
+            <Star className="size-3.5 fill-amber-400 text-amber-400" />
+            {course.rating}
+          </span>
+        </div>
+
+        {/* Price */}
+        <div className="flex items-center justify-between mt-4">
+          <div className="flex items-baseline gap-2">
+            <span className="text-xl font-extrabold text-gray-900">
+              ${course.price.toLocaleString("es-MX")}
+            </span>
+            {course.originalPrice && (
+              <span className="text-xs text-gray-400 line-through">
+                ${course.originalPrice.toLocaleString("es-MX")}
+              </span>
+            )}
+          </div>
+          {course.originalPrice && (
+            <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 rounded-md px-2 py-0.5">
+              -
+              {(
+                ((course.originalPrice - course.price) /
+                  course.originalPrice) *
+                100
+              ).toFixed(0)}
+              %
+            </span>
+          )}
         </div>
       </div>
     </motion.div>
@@ -306,23 +359,23 @@ export default function Landing() {
             whileInView="visible"
             viewport={{ once: true, margin: "-80px" }}
             variants={stagger}
-            className="text-center mb-16"
+            className="mb-14"
           >
             <motion.p
               variants={fadeUp}
               className="text-sm font-semibold tracking-widest uppercase text-primary mb-3"
             >
-              Catálogo de cursos
+              Nuestros cursos
             </motion.p>
             <motion.h2
               variants={fadeUp}
-              className="text-3xl md:text-5xl font-bold tracking-tight text-foreground"
+              className="text-3xl md:text-5xl font-bold tracking-tight text-gray-900"
             >
-              Explora lo que puedes enseñar
+              Aprende con los mejores instructores
             </motion.h2>
             <motion.p
               variants={fadeUp}
-              className="mt-4 text-muted-foreground max-w-xl mx-auto"
+              className="mt-4 text-gray-500 max-w-xl text-[15px]"
             >
               Cada curso combina teoría, práctica y proyectos listos para
               implementar en el aula. Pasa el cursor sobre una tarjeta para

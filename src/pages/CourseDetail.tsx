@@ -96,26 +96,43 @@ export default function CourseDetail() {
             {/* Hero area */}
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <span className="text-xs font-semibold uppercase tracking-wide text-primary bg-primary/8 rounded-full px-2.5 py-0.5">
-                  {course.tag}
+                <span
+                  className={`text-xs font-semibold tracking-wide rounded-md px-2.5 py-0.5 border ${course.categoryColor}`}
+                >
+                  {course.category}
                 </span>
-                <span className="text-xs text-muted-foreground">
-                  {course.category} · {course.level}
+                <span className="text-xs text-gray-400">
+                  {course.level}
                 </span>
               </div>
 
-              <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground mb-3">
+              <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 mb-3">
                 {course.title}
               </h1>
-              <p className="text-lg text-muted-foreground italic">
+              <p className="text-lg text-gray-500 italic">
                 {course.tagline}
               </p>
 
+              {/* Instructor */}
+              <div className="flex items-center gap-3 mt-5 p-4 rounded-xl bg-white/60 backdrop-blur-sm border border-gray-200/60">
+                <div
+                  className={`size-11 rounded-full bg-gradient-to-br ${course.instructor.color} flex items-center justify-center text-white text-xs font-bold shadow-md`}
+                >
+                  {course.instructor.initials}
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-gray-900">
+                    {course.instructor.name}
+                  </p>
+                  <p className="text-xs text-gray-400">Instructor del curso</p>
+                </div>
+              </div>
+
               {/* Stats row */}
-              <div className="flex flex-wrap items-center gap-5 mt-6 text-sm text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-5 mt-6 text-sm text-gray-500">
                 <span className="flex items-center gap-1.5">
                   <Star className="size-4 fill-amber-400 text-amber-400" />
-                  <strong className="text-foreground">{course.rating}</strong>
+                  <strong className="text-gray-900">{course.rating}</strong>
                   ({course.reviews} reseñas)
                 </span>
                 <span className="flex items-center gap-1.5">
@@ -155,27 +172,27 @@ export default function CourseDetail() {
 
             {/* Description */}
             <div>
-              <h2 className="text-xl font-bold text-foreground mb-3">
+              <h2 className="text-xl font-bold text-gray-900 mb-3">
                 Sobre este curso
               </h2>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="text-gray-500 leading-relaxed">
                 {course.longDescription}
               </p>
             </div>
 
             {/* Highlights */}
             <div>
-              <h2 className="text-xl font-bold text-foreground mb-4">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">
                 ¿Qué incluye?
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {course.highlights.map((h) => (
                   <div
                     key={h}
-                    className="flex items-start gap-3 rounded-xl border border-white/50 bg-white/50 backdrop-blur-sm px-4 py-3"
+                    className="flex items-start gap-3 rounded-xl border border-gray-200/60 bg-white px-4 py-3"
                   >
                     <CheckCircle2 className="size-5 text-primary shrink-0 mt-0.5" />
-                    <span className="text-sm text-foreground/80">{h}</span>
+                    <span className="text-sm text-gray-700">{h}</span>
                   </div>
                 ))}
               </div>
@@ -183,7 +200,7 @@ export default function CourseDetail() {
 
             {/* Schedule */}
             <div>
-              <h2 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
+              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <Calendar className="size-5 text-primary" />
                 Horarios disponibles
               </h2>
@@ -201,13 +218,13 @@ export default function CourseDetail() {
                       !slot.available
                         ? "bg-muted/50 border-border/50 opacity-50 cursor-not-allowed"
                         : selectedSlot === slot.id
-                          ? "bg-primary/5 border-primary/40 shadow-md shadow-primary/10"
-                          : "bg-white/50 border-white/50 hover:border-primary/30 hover:bg-white/70"
+                          ?                      "bg-primary/5 border-primary/40 shadow-md shadow-primary/10"
+                        : "bg-white border-gray-200 hover:border-primary/30 hover:bg-gray-50"
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="font-semibold text-foreground text-sm">
+                        <p className="font-semibold text-gray-900 text-sm">
                           {new Date(slot.date + "T12:00:00").toLocaleDateString(
                             "es-MX",
                             {
@@ -218,7 +235,7 @@ export default function CourseDetail() {
                             }
                           )}
                         </p>
-                        <p className="text-xs text-muted-foreground mt-0.5">
+                        <p className="text-xs text-gray-400 mt-0.5">
                           {slot.time} · {slot.instructor}
                         </p>
                       </div>
