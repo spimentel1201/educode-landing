@@ -33,13 +33,11 @@ const fadeUp = {
   },
 };
 
-/* ─── Platzi/EdTeam-style course card ─── */
+/* ─── Platzi/EdTeam-style course card (dark) ─── */
 function CoursePreviewCard({
   course,
-  index,
 }: {
   course: (typeof courses)[0];
-  index: number;
 }) {
   const navigate = useNavigate();
   const mouseX = useMotionValue(0);
@@ -61,46 +59,43 @@ function CoursePreviewCard({
         mouseX.set(0);
         mouseY.set(0);
       }}
-      className="group relative rounded-2xl border border-black/[0.06] bg-white overflow-hidden shadow-sm hover:shadow-xl hover:shadow-black/[0.06] transition-all duration-300 cursor-pointer"
+      className="group relative rounded-2xl border border-white/[0.06] bg-white/[0.04] backdrop-blur-sm overflow-hidden shadow-lg shadow-black/20 cursor-pointer hover:border-white/[0.12] hover:bg-white/[0.06] transition-all duration-300"
       onClick={() => navigate(`/courses/${course.id}`)}
     >
-      {/* Thumbnail area */}
+      {/* Thumbnail */}
       <div
         className={`relative h-44 bg-gradient-to-br ${course.gradient} flex items-center justify-center overflow-hidden`}
       >
-        <span className="text-5xl drop-shadow-sm group-hover:scale-110 transition-transform duration-500">
+        <span className="text-5xl drop-shadow-lg group-hover:scale-110 transition-transform duration-500">
           {course.icon}
         </span>
-        {/* Code preview on hover */}
         {course.previewCode && (
-          <div className="absolute inset-0 bg-gray-900/90 backdrop-blur-sm flex flex-col justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 p-5">
-            <pre className="text-[11px] leading-relaxed text-emerald-300/90 font-mono whitespace-pre-wrap text-left">
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex flex-col justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 p-5">
+            <pre className="text-[11px] leading-relaxed text-emerald-400/80 font-mono whitespace-pre-wrap text-left">
               {course.previewCode}
             </pre>
-            <div className="absolute bottom-3 right-3 flex items-center gap-1 text-[10px] font-medium text-white/50">
+            <div className="absolute bottom-3 right-3 flex items-center gap-1 text-[10px] font-medium text-white/40">
               <Play className="size-2.5" />
               Vista previa
             </div>
           </div>
         )}
-        {/* Tag badge */}
-        <span className="absolute top-3 left-3 text-[11px] font-bold tracking-wide uppercase bg-white/90 backdrop-blur-sm text-foreground/80 rounded-md px-2 py-0.5 shadow-sm">
+        <span className="absolute top-3 left-3 text-[11px] font-bold tracking-wide uppercase bg-white/10 backdrop-blur-md text-white/80 rounded-md px-2 py-0.5 border border-white/10">
           {course.tag}
         </span>
       </div>
 
       <div className="p-5">
-        {/* Category pill */}
         <span
           className={`inline-block text-[11px] font-semibold tracking-wide rounded-md px-2 py-0.5 border mb-3 ${course.categoryColor}`}
         >
           {course.category}
         </span>
 
-        <h3 className="text-[15px] font-bold text-gray-900 mb-1.5 group-hover:text-primary transition-colors leading-snug">
+        <h3 className="text-[15px] font-bold text-white mb-1.5 group-hover:text-primary transition-colors leading-snug">
           {course.title}
         </h3>
-        <p className="text-[13px] text-gray-500 leading-relaxed mb-4 line-clamp-2">
+        <p className="text-[13px] text-zinc-400 leading-relaxed mb-4 line-clamp-2">
           {course.description}
         </p>
 
@@ -112,15 +107,15 @@ function CoursePreviewCard({
             {course.instructor.initials}
           </div>
           <div>
-            <p className="text-xs font-semibold text-gray-700">
+            <p className="text-xs font-semibold text-zinc-300">
               {course.instructor.name}
             </p>
-            <p className="text-[11px] text-gray-400">Instructor</p>
+            <p className="text-[11px] text-zinc-500">Instructor</p>
           </div>
         </div>
 
-        {/* Meta row */}
-        <div className="flex items-center gap-3 text-[12px] text-gray-400 border-t border-gray-100 pt-3">
+        {/* Meta */}
+        <div className="flex items-center gap-3 text-[12px] text-zinc-500 border-t border-white/[0.06] pt-3">
           <span className="flex items-center gap-1">
             <Clock className="size-3.5" />
             {course.duration}
@@ -131,7 +126,7 @@ function CoursePreviewCard({
           </span>
           <span className="flex items-center gap-1">
             <Users className="size-3.5" />
-            {course.students.toLocaleString("es-MX")}
+            {course.students.toLocaleString("es-PE")}
           </span>
           <span className="flex items-center gap-1 ml-auto">
             <Star className="size-3.5 fill-amber-400 text-amber-400" />
@@ -142,24 +137,18 @@ function CoursePreviewCard({
         {/* Price */}
         <div className="flex items-center justify-between mt-4">
           <div className="flex items-baseline gap-2">
-            <span className="text-xl font-extrabold text-gray-900">
-              ${course.price.toLocaleString("es-MX")}
+            <span className="text-xl font-extrabold text-white">
+              S/ {course.price.toLocaleString("es-PE")}
             </span>
             {course.originalPrice && (
-              <span className="text-xs text-gray-400 line-through">
-                ${course.originalPrice.toLocaleString("es-MX")}
+              <span className="text-xs text-zinc-500 line-through">
+                S/ {course.originalPrice.toLocaleString("es-PE")}
               </span>
             )}
           </div>
           {course.originalPrice && (
-            <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 rounded-md px-2 py-0.5">
-              -
-              {(
-                ((course.originalPrice - course.price) /
-                  course.originalPrice) *
-                100
-              ).toFixed(0)}
-              %
+            <span className="text-[11px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-md px-2 py-0.5">
+              -{((course.originalPrice - course.price) / course.originalPrice * 100).toFixed(0)}%
             </span>
           )}
         </div>
@@ -220,13 +209,13 @@ export default function Landing() {
     >
       {/* Ambient background */}
       <div className="pointer-events-none fixed inset-0 -z-10">
-        <div className="absolute -top-40 -left-40 h-[700px] w-[700px] rounded-full bg-blue-200/25 blur-[140px]" />
-        <div className="absolute top-1/3 -right-32 h-[500px] w-[500px] rounded-full bg-cyan-200/18 blur-[120px]" />
-        <div className="absolute -bottom-40 left-1/3 h-[500px] w-[500px] rounded-full bg-violet-200/15 blur-[120px]" />
+        <div className="absolute -top-40 -left-40 h-[700px] w-[700px] rounded-full bg-blue-600/8 blur-[160px]" />
+        <div className="absolute top-1/3 -right-32 h-[500px] w-[500px] rounded-full bg-cyan-600/6 blur-[130px]" />
+        <div className="absolute -bottom-40 left-1/3 h-[500px] w-[500px] rounded-full bg-violet-600/6 blur-[130px]" />
       </div>
 
       {/* ── Navbar ── */}
-      <nav className="sticky top-0 z-50 backdrop-blur-xl bg-white/60 border-b border-white/40">
+      <nav className="sticky top-0 z-50 backdrop-blur-xl bg-black/50 border-b border-white/[0.06]">
         <div className="mx-auto max-w-7xl flex items-center justify-between px-6 lg:px-12 py-4">
           <a href="/" className="flex items-center gap-2.5 group">
             <img
@@ -234,26 +223,20 @@ export default function Landing() {
               alt="EduCode"
               className="h-9 w-9 rounded-lg group-hover:scale-105 transition-transform"
             />
-            <span className="text-xl font-bold tracking-tight text-foreground">
+            <span className="text-xl font-bold tracking-tight text-white">
               Edu<span className="text-primary">Code</span>
             </span>
           </a>
 
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
-            <a
-              href="/courses"
-              className="hover:text-primary transition-colors flex items-center gap-1"
-            >
+          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
+            <a href="/courses" className="hover:text-white transition-colors flex items-center gap-1">
               Catálogo
               <ChevronRight className="size-3.5" />
             </a>
-            <a href="#cursos" className="hover:text-primary transition-colors">
+            <a href="#cursos" className="hover:text-white transition-colors">
               Cursos
             </a>
-            <a
-              href="#testimonios"
-              className="hover:text-primary transition-colors"
-            >
+            <a href="#testimonios" className="hover:text-white transition-colors">
               Testimonios
             </a>
           </div>
@@ -261,7 +244,7 @@ export default function Landing() {
           <Button
             size="sm"
             onClick={() => navigate("/auth")}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer shadow-md shadow-primary/20"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer shadow-md shadow-primary/25"
           >
             Comenzar
             <ArrowRight className="ml-1.5 size-4" />
@@ -276,7 +259,7 @@ export default function Landing() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-primary/5 backdrop-blur-sm px-4 py-1.5 text-sm font-medium text-primary mb-8"
+            className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 backdrop-blur-sm px-4 py-1.5 text-sm font-medium text-primary mb-8"
           >
             <Sparkles className="size-4" />
             Plataforma educativa del futuro
@@ -286,11 +269,11 @@ export default function Landing() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className="text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.05] text-foreground"
+            className="text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.05] text-white"
           >
             Aprende programación
             <br />
-            <span className="bg-gradient-to-r from-primary via-blue-500 to-cyan-500 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-primary via-blue-400 to-cyan-400 bg-clip-text text-transparent">
               en tiempo real.
             </span>
           </motion.h1>
@@ -299,7 +282,7 @@ export default function Landing() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-7 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
+            className="mt-7 text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed"
           >
             EduCode ofrece cursos interactivos diseñados para escuelas y
             profesores que quieren enseñar tecnología de forma vivida,
@@ -315,7 +298,7 @@ export default function Landing() {
             <Button
               size="lg"
               onClick={() => navigate("/courses")}
-              className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer shadow-lg shadow-primary/25 px-8 text-base"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer shadow-lg shadow-primary/30 px-8 text-base"
             >
               <Search className="mr-2 size-5" />
               Explorar catálogo
@@ -324,7 +307,7 @@ export default function Landing() {
               size="lg"
               variant="outline"
               onClick={() => navigate("/auth")}
-              className="backdrop-blur-sm bg-white/50 border-white/60 hover:bg-white/70 cursor-pointer px-8 text-base"
+              className="border-white/10 bg-white/5 hover:bg-white/10 text-white cursor-pointer px-8 text-base"
             >
               <GraduationCap className="mr-2 size-5" />
               Soy profesor
@@ -341,7 +324,7 @@ export default function Landing() {
             {features.map((f) => (
               <div
                 key={f.text}
-                className="flex items-center gap-2 rounded-xl border border-white/50 bg-white/50 backdrop-blur-md px-5 py-3 text-sm text-foreground/80 shadow-sm"
+                className="flex items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.04] backdrop-blur-md px-5 py-3 text-sm text-zinc-300"
               >
                 <span className="text-primary">{f.icon}</span>
                 {f.text}
@@ -369,13 +352,13 @@ export default function Landing() {
             </motion.p>
             <motion.h2
               variants={fadeUp}
-              className="text-3xl md:text-5xl font-bold tracking-tight text-gray-900"
+              className="text-3xl md:text-5xl font-bold tracking-tight text-white"
             >
               Aprende con los mejores instructores
             </motion.h2>
             <motion.p
               variants={fadeUp}
-              className="mt-4 text-gray-500 max-w-xl text-[15px]"
+              className="mt-4 text-zinc-400 max-w-xl text-[15px]"
             >
               Cada curso combina teoría, práctica y proyectos listos para
               implementar en el aula. Pasa el cursor sobre una tarjeta para
@@ -388,10 +371,10 @@ export default function Landing() {
             whileInView="visible"
             viewport={{ once: true, margin: "-60px" }}
             variants={stagger}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
           >
-            {courses.map((course, i) => (
-              <CoursePreviewCard key={course.id} course={course} index={i} />
+            {courses.map((course) => (
+              <CoursePreviewCard key={course.id} course={course} />
             ))}
           </motion.div>
 
@@ -406,7 +389,7 @@ export default function Landing() {
               variant="outline"
               size="lg"
               onClick={() => navigate("/courses")}
-              className="backdrop-blur-sm bg-white/50 border-white/60 hover:bg-white/70 cursor-pointer"
+              className="border-white/10 bg-white/5 hover:bg-white/10 text-white cursor-pointer"
             >
               Ver catálogo completo
               <ArrowRight className="ml-2 size-4" />
@@ -433,13 +416,13 @@ export default function Landing() {
             </motion.p>
             <motion.h2
               variants={fadeUp}
-              className="text-3xl md:text-5xl font-bold tracking-tight text-foreground"
+              className="text-3xl md:text-5xl font-bold tracking-tight text-white"
             >
               Lo que dicen los educadores
             </motion.h2>
             <motion.p
               variants={fadeUp}
-              className="mt-4 text-muted-foreground max-w-xl mx-auto"
+              className="mt-4 text-zinc-400 max-w-xl mx-auto"
             >
               Profesores y directores de toda Latinoamérica ya transforman sus
               aulas con EduCode.
@@ -457,38 +440,26 @@ export default function Landing() {
               <motion.div
                 key={t.name}
                 variants={fadeUp}
-                whileHover={{
-                  y: -4,
-                  transition: { duration: 0.25 },
-                }}
-                className="relative rounded-2xl border border-white/50 bg-white/50 backdrop-blur-xl p-8 shadow-lg shadow-black/5"
+                whileHover={{ y: -4, transition: { duration: 0.25 } }}
+                className="relative rounded-2xl border border-white/[0.06] bg-white/[0.04] backdrop-blur-xl p-8 shadow-lg shadow-black/20"
               >
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/40 to-white/10 pointer-events-none" />
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
                 <div className="relative">
                   <div className="flex gap-1 mb-4">
                     {Array.from({ length: t.rating }).map((_, j) => (
-                      <Star
-                        key={j}
-                        className="size-4 fill-amber-400 text-amber-400"
-                      />
+                      <Star key={j} className="size-4 fill-amber-400 text-amber-400" />
                     ))}
                   </div>
-                  <p className="text-foreground/80 leading-relaxed mb-6 text-sm">
+                  <p className="text-zinc-300 leading-relaxed mb-6 text-sm">
                     &ldquo;{t.quote}&rdquo;
                   </p>
                   <div className="flex items-center gap-3">
-                    <div className="size-10 rounded-full bg-gradient-to-br from-primary/30 to-blue-400/30 backdrop-blur-sm border border-white/50 flex items-center justify-center text-primary font-bold text-sm">
-                      {t.name
-                        .split(" ")
-                        .map((w) => w[0])
-                        .join("")
-                        .slice(0, 2)}
+                    <div className="size-10 rounded-full bg-gradient-to-br from-primary/40 to-blue-400/30 flex items-center justify-center text-primary font-bold text-sm">
+                      {t.name.split(" ").map((w) => w[0]).join("").slice(0, 2)}
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-foreground">
-                        {t.name}
-                      </p>
-                      <p className="text-xs text-muted-foreground">{t.role}</p>
+                      <p className="text-sm font-semibold text-white">{t.name}</p>
+                      <p className="text-xs text-zinc-500">{t.role}</p>
                     </div>
                   </div>
                 </div>
@@ -506,24 +477,24 @@ export default function Landing() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="relative overflow-hidden rounded-3xl border border-white/50 bg-white/50 backdrop-blur-2xl p-12 md:p-16 text-center shadow-2xl shadow-primary/10"
+            className="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-2xl p-12 md:p-16 text-center shadow-2xl shadow-primary/5"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-blue-400/8 to-cyan-400/8 pointer-events-none" />
-            <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-blue-300/15 blur-[80px] pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full bg-violet-300/10 blur-[80px] pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-blue-600/5 to-cyan-600/5 pointer-events-none" />
+            <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-blue-500/10 blur-[80px] pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full bg-violet-500/8 blur-[80px] pointer-events-none" />
 
             <div className="relative">
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
                 Transforma tu aula hoy
               </h2>
-              <p className="mt-4 text-muted-foreground max-w-lg mx-auto">
+              <p className="mt-4 text-zinc-400 max-w-lg mx-auto">
                 Únete a cientos de escuelas que ya enseñan tecnología de forma
                 interactiva y efectiva. Crea tu cuenta sin costo.
               </p>
               <Button
                 size="lg"
                 onClick={() => navigate("/auth")}
-                className="mt-8 bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer shadow-lg shadow-primary/25 px-10 text-base"
+                className="mt-8 bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer shadow-lg shadow-primary/30 px-10 text-base"
               >
                 Crear mi cuenta gratis
                 <ArrowRight className="ml-2 size-5" />
@@ -534,23 +505,23 @@ export default function Landing() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="border-t border-white/40 bg-white/40 backdrop-blur-xl">
+      <footer className="border-t border-white/[0.06] bg-black/40 backdrop-blur-xl">
         <div className="mx-auto max-w-7xl px-6 lg:px-12 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2.5">
             <img src={logo} alt="EduCode" className="h-7 w-7 rounded-md" />
-            <span className="font-bold text-foreground">
+            <span className="font-bold text-white">
               Edu<span className="text-primary">Code</span>
             </span>
           </div>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-zinc-500">
             &copy; {new Date().getFullYear()} EduCode. Cursos interactivos para
             las aulas del futuro.
           </p>
-          <div className="flex gap-6 text-sm text-muted-foreground">
-            <a href="#" className="hover:text-primary transition-colors">
+          <div className="flex gap-6 text-sm text-zinc-500">
+            <a href="#" className="hover:text-white transition-colors">
               Términos
             </a>
-            <a href="#" className="hover:text-primary transition-colors">
+            <a href="#" className="hover:text-white transition-colors">
               Privacidad
             </a>
           </div>
